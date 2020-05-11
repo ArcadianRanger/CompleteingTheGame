@@ -5,11 +5,14 @@ using UnityEngine;
 public class Target : MonoBehaviour
 {
     private Rigidbody targetRB;
-
+    private EventManager eventManager;
+    public ParticleSystem expParticle;
 
     // Start is called before the first frame update
     void Start()
     {
+        eventManager = GameObject.Find("EventManager").GetComponent<EventManager>();
+
         targetRB = GetComponent<Rigidbody>();
 
         transform.position = new Vector3(Random.Range(-5, 5), -5);
@@ -27,7 +30,17 @@ public class Target : MonoBehaviour
 
     private void OnMouseDown()
     {
+        Instantiate(expParticle, transform.position, expParticle.transform.rotation);
+
         Destroy(gameObject);
+        if (CompareTag("Bad Target"))
+        {
+            eventManager.targetDestroy.Invoke(-7);
+        }
+        else if(CompareTag("Good Target"))
+        {
+            eventManager.targetDestroy.Invoke(7);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
